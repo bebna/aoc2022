@@ -8,25 +8,27 @@
  * $ cat input.txt | awk '{ print length }' | sort -n | tail -1
  * 5
  */
-#define LINE_LEN 8 
+#define LINE_LEN 8
 
-static void swap(unsigned long *a, unsigned long *b) {
+static void swap(unsigned long *a, unsigned long *b)
+{
 	unsigned long tmp = *a;
 	*a = *b;
 	*b = tmp;
 }
 
-static void process_elf(unsigned long *top, unsigned long current_elf) {
-	for(int i=0; i<3 ;i++) {
-		if (top[i] < current_elf) {
+static void process_elf(unsigned long *top, unsigned long current_elf)
+{
+	for (int i = 0; i < 3; i++) {
+		if (top[i] < current_elf)
 			swap(&top[i], &current_elf);
-		}
 	}
 }
 
-int main() {
+int main()
+{
 	char buffer[LINE_LEN] = "";
-	unsigned long top[3] = {0};
+	unsigned long top[3] = { 0 };
 	unsigned long current_elf = 0;
 	unsigned long current_line = 0;
 	FILE *fp = fopen("./input.txt", "r");
@@ -43,7 +45,7 @@ int main() {
 			current_elf = 0;
 			continue;
 		}
-		
+
 		// shouldn't happen, but make sure that line wasn't longer than buffer
 		if (strchr(buffer, '\n') == NULL) {
 			perror("line length longer than expected");
@@ -59,9 +61,10 @@ int main() {
 			perror("read number exceeds my capacity");
 			return 1;
 		}
-		
+
 		// shouldn't happen, but make sure that sum isn't larger than type limit
-		if (current_line > 0 && current_elf > (ULONG_MAX - current_line)) {
+		if (current_line > 0 &&
+		    current_elf > (ULONG_MAX - current_line)) {
 			perror("total number of one elf exceeds my capacity");
 			return 1;
 		}
@@ -73,7 +76,8 @@ int main() {
 		process_elf(top, current_elf);
 	}
 	if ((top[1] > 0 && top[2] > (ULONG_MAX - top[1])) ||
-	    ((top[1] + top[2]) > 0 && top[0] > (ULONG_MAX - (top[1] + top[2])))) {
+	    ((top[1] + top[2]) > 0 &&
+	     top[0] > (ULONG_MAX - (top[1] + top[2])))) {
 		perror("total of the top 3 elves exceeds my capacity");
 		return 1;
 	}
