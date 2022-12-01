@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <string.h>
+#include <stdbool.h>
 
 /* How I chose the LINE_LEN:
  * $ cat input.txt | awk '{ print length }' | sort -n | tail -1
@@ -15,6 +16,11 @@ static void swap(unsigned long *a, unsigned long *b)
 	unsigned long tmp = *a;
 	*a = *b;
 	*b = tmp;
+}
+
+static bool addition_bounds_check(unsigned long a, unsigned long b)
+{
+	return (a > 0 && b > (ULONG_MAX - a));
 }
 
 static void process_elf(unsigned long *top, unsigned long current_elf)
@@ -63,8 +69,7 @@ int main()
 		}
 
 		// shouldn't happen, but make sure that sum isn't larger than type limit
-		if (current_line > 0 &&
-		    current_elf > (ULONG_MAX - current_line)) {
+		if (addition_bounds_check(current_line, current_elf)) {
 			perror("total number of one elf exceeds my capacity");
 			return 1;
 		}
@@ -75,9 +80,8 @@ int main()
 	if (current_elf != 0) {
 		process_elf(top, current_elf);
 	}
-	if ((top[1] > 0 && top[2] > (ULONG_MAX - top[1])) ||
-	    ((top[1] + top[2]) > 0 &&
-	     top[0] > (ULONG_MAX - (top[1] + top[2])))) {
+	if (addition_bounds_check(top[0], top[1]) &&
+	    addition_bounds_check(top[0] + top[1], top[2])) {
 		perror("total of the top 3 elves exceeds my capacity");
 		return 1;
 	}
