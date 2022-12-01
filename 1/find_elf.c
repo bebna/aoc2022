@@ -14,13 +14,14 @@
 static void swap(unsigned long *a, unsigned long *b)
 {
 	unsigned long tmp = *a;
+
 	*a = *b;
 	*b = tmp;
 }
 
 static bool addition_bounds_check(unsigned long a, unsigned long b)
 {
-	return (a > 0 && b > (ULONG_MAX - a));
+	return b > (ULONG_MAX - a);
 }
 
 static void process_elf(unsigned long *top, unsigned long current_elf)
@@ -80,7 +81,7 @@ int main()
 	if (current_elf != 0) {
 		process_elf(top, current_elf);
 	}
-	if (addition_bounds_check(top[0], top[1]) &&
+	if (addition_bounds_check(top[0], top[1]) ||
 	    addition_bounds_check(top[0] + top[1], top[2])) {
 		perror("total of the top 3 elves exceeds my capacity");
 		return 1;
