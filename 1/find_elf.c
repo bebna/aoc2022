@@ -10,13 +10,13 @@
  */
 #define LINE_LEN 8 
 
-void swap(unsigned long *a, unsigned long *b) {
+static void swap(unsigned long *a, unsigned long *b) {
 	unsigned long tmp = *a;
 	*a = *b;
 	*b = tmp;
 }
 
-void process_elf(unsigned long *top, unsigned long current_elf) {
+static void process_elf(unsigned long *top, unsigned long current_elf) {
 	for(int i=0; i<3 ;i++) {
 		if (top[i] < current_elf) {
 			swap(&top[i], &current_elf);
@@ -73,11 +73,11 @@ int main() {
 		process_elf(top, current_elf);
 	}
 	if ((top[1] > 0 && top[2] > (ULONG_MAX - top[1])) ||
-	    ((top[1] + top[2]) > 0 && top[0] > (ULONG_MAX - (top[1]+top[2])))) {
+	    ((top[1] + top[2]) > 0 && top[0] > (ULONG_MAX - (top[1] + top[2])))) {
 		perror("total of the top 3 elves exceeds my capacity");
 		return 1;
 	}
 
-	printf("%ld\n%ld\n", top[0], (top[0]+top[1]+top[2]));
+	printf("%ld\n%ld\n", top[0], (top[0] + top[1] + top[2]));
 	return 0;
 }
